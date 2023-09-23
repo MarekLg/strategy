@@ -2,10 +2,14 @@ use std::ops;
 
 use bevy::prelude::Vec2;
 
-use super::direction::Direction;
+use super::{corner::Corner, edge::Edge};
 
-const SQRT_3: f32 = 1.7320508076;
-const SQRT_3_HALF: f32 = 0.8660254038;
+const WIDTH: f32 = 1.7320508076;
+const WIDTH_1_2: f32 = 0.8660254038;
+const HEIGHT: f32 = 2.0;
+const HEIGHT_1_2: f32 = 1.0;
+const HEIGHT_3_4: f32 = 1.5;
+const HEIGHT_1_4: f32 = 0.5;
 
 pub struct Position {
     pub q: i16,
@@ -13,26 +17,24 @@ pub struct Position {
 }
 
 impl Position {
+    pub const ZERO: Position = Self { q: 0, r: 0 };
+
     pub fn new(q: i16, r: i16) -> Self {
         Self { q, r }
-    }
-
-    pub fn zero() -> Self {
-        Self { q: 0, r: 0 }
     }
 
     pub fn s(&self) -> i16 {
         -self.q - self.r
     }
 
-    pub fn neighbor(&self, direction: Direction) -> Self {
-        self + match direction {
-            Direction::NE => Position { q: 1, r: -1 },
-            Direction::E => Position { q: 1, r: 0 },
-            Direction::SE => Position { q: 0, r: 1 },
-            Direction::SW => Position { q: -1, r: 1 },
-            Direction::W => Position { q: -1, r: 0 },
-            Direction::NW => Position { q: 0, r: -1 },
+    pub fn neighbor(&self, edge: Edge) -> Self {
+        self + match edge {
+            Edge::NE => Position { q: 1, r: -1 },
+            Edge::E => Position { q: 1, r: 0 },
+            Edge::SE => Position { q: 0, r: 1 },
+            Edge::SW => Position { q: -1, r: 1 },
+            Edge::W => Position { q: -1, r: 0 },
+            Edge::NW => Position { q: 0, r: -1 },
         }
     }
 
@@ -43,9 +45,39 @@ impl Position {
 
     pub fn offset(&self) -> Vec2 {
         Vec2::new(
-            self.q as f32 * SQRT_3 + self.r as f32 * SQRT_3_HALF,
-            self.r as f32 * -1.5,
+            self.q as f32 * WIDTH + self.r as f32 * WIDTH_1_2,
+            self.r as f32 * -HEIGHT_3_4,
         )
+    }
+
+    pub fn corner_offset(&self, corner: Corner) -> Vec2 {
+        self.offset()
+            + match corner {
+                Corner::N => Vec2 {
+                    x: 0.0,
+                    y: HEIGHT_1_2,
+                },
+                Corner::NE => Vec2 {
+                    x: WIDTH_1_2,
+                    y: HEIGHT_1_4,
+                },
+                Corner::SE => Vec2 {
+                    x: WIDTH_1_2,
+                    y: -HEIGHT_1_4,
+                },
+                Corner::S => Vec2 {
+                    x: 0.0,
+                    y: -HEIGHT_1_2,
+                },
+                Corner::SW => Vec2 {
+                    x: -WIDTH_1_2,
+                    y: -HEIGHT_1_4,
+                },
+                Corner::NW => Vec2 {
+                    x: -WIDTH_1_2,
+                    y: HEIGHT_1_4,
+                },
+            }
     }
 }
 
