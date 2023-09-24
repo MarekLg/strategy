@@ -2,7 +2,7 @@
 
 - [x] hex corners
 - [x] hex tile
-- [ ] hex map (6 tiles)
-- [ ] generate small hex map
+- [x] hex map (6 tiles)
 - [ ] make unit (sphere) on hex tile
 - [ ] make unit move between tiles
+- [ ] generate small hex map (randomly)

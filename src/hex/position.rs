@@ -2,7 +2,10 @@ use std::ops;
 
 use bevy::prelude::Vec2;
 
-use super::{corner::Corner, edge::Edge};
+use super::{
+    corner::Corner,
+    edge::{Edge, EDGES},
+};
 
 const WIDTH: f32 = 1.7320508076;
 const WIDTH_1_2: f32 = 0.8660254038;
@@ -11,6 +14,7 @@ const HEIGHT_1_2: f32 = 1.0;
 const HEIGHT_3_4: f32 = 1.5;
 const HEIGHT_1_4: f32 = 0.5;
 
+#[derive(Clone, Copy)]
 pub struct Position {
     pub q: i16,
     pub r: i16,
@@ -27,7 +31,7 @@ impl Position {
         -self.q - self.r
     }
 
-    pub fn neighbor(&self, edge: Edge) -> Self {
+    pub fn neighbor(&self, edge: &Edge) -> Self {
         self + match edge {
             Edge::NE => Position { q: 1, r: -1 },
             Edge::E => Position { q: 1, r: 0 },
@@ -38,20 +42,24 @@ impl Position {
         }
     }
 
+    pub fn neighbors(&self) -> [Self; 6] {
+        EDGES.map(|edge| self.neighbor(&edge))
+    }
+
     pub fn distance(&self, rhs: &Position) -> i16 {
         ((self.q - rhs.q).abs() + (self.q + self.r - rhs.q - rhs.r).abs() + (self.r - rhs.r).abs())
             / 2
     }
 
-    pub fn offset(&self) -> Vec2 {
+    pub fn center(&self) -> Vec2 {
         Vec2::new(
             self.q as f32 * WIDTH + self.r as f32 * WIDTH_1_2,
             self.r as f32 * -HEIGHT_3_4,
         )
     }
 
-    pub fn corner_offset(&self, corner: Corner) -> Vec2 {
-        self.offset()
+    pub fn corner(&self, corner: Corner) -> Vec2 {
+        self.center()
             + match corner {
                 Corner::N => Vec2 {
                     x: 0.0,
@@ -94,5 +102,13 @@ impl ops::Sub<Position> for &Position {
 
     fn sub(self, rhs: Position) -> Self::Output {
         Position::new(self.q - rhs.q, self.r - rhs.r)
+    }
+}
+
+impl ops::Mul<u16> for &Position {
+    type Output = Position;
+
+    fn mul(self, rhs: u16) -> Self::Output {
+        Position::new(self.q * rhs as i16, self.r * rhs as i16)
     }
 }
