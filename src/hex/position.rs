@@ -9,6 +9,7 @@ use super::{
 
 const WIDTH: f32 = 1.7320508076;
 const WIDTH_1_2: f32 = 0.8660254038;
+#[allow(dead_code)]
 const HEIGHT: f32 = 2.0;
 const HEIGHT_1_2: f32 = 1.0;
 const HEIGHT_3_4: f32 = 1.5;

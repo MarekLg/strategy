@@ -1,40 +1,13 @@
 use bevy::{
-    prelude::{Mesh, Vec3},
+    prelude::*,
     render::{mesh::Indices, render_resource::PrimitiveTopology},
 };
 
-use crate::hex::{
-    corner::CORNERS,
-    edge::{Edge, EDGES},
-    position::Position,
-};
+use crate::hex::corner::CORNERS;
 
-pub struct Map {
-    tiles: Vec<Position>,
-}
+use super::Map;
 
 impl Map {
-    pub fn from_circle(radius: u16) -> Self {
-        let mut tiles = Vec::new();
-
-        let center = Position::ZERO;
-        tiles.push(center);
-
-        for i in 1..radius + 1 {
-            let mut position = &center.neighbor(&Edge::W) * i;
-
-            for edge in EDGES {
-                for _ in 0..i {
-                    tiles.push(position);
-
-                    position = position.neighbor(&edge);
-                }
-            }
-        }
-
-        Self { tiles }
-    }
-
     pub fn generate_mesh(&self) -> Mesh {
         let mut mesh = Mesh::new(PrimitiveTopology::TriangleList);
         let mut positions = Vec::new();
@@ -42,8 +15,12 @@ impl Map {
         let mut indices = Vec::new();
 
         for (index, tile) in self.tiles.iter().enumerate() {
-            positions.push(tile.center());
-            positions.append(&mut CORNERS.map(|corner| tile.corner(corner)).to_vec());
+            positions.push(tile.position().center());
+            positions.append(
+                &mut CORNERS
+                    .map(|corner| tile.position().corner(corner))
+                    .to_vec(),
+            );
 
             normals.append(&mut (0..7).map(|_| Vec3::Y).collect::<Vec<_>>());
 
