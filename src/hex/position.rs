@@ -15,7 +15,7 @@ const HEIGHT_1_2: f32 = 1.0;
 const HEIGHT_3_4: f32 = 1.5;
 const HEIGHT_1_4: f32 = 0.5;
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Position {
     pub q: i16,
     pub r: i16,
@@ -52,15 +52,15 @@ impl Position {
             / 2
     }
 
-    pub fn center(&self) -> Vec2 {
+    pub fn offset(&self) -> Vec2 {
         Vec2::new(
             self.q as f32 * WIDTH + self.r as f32 * WIDTH_1_2,
             self.r as f32 * -HEIGHT_3_4,
         )
     }
 
-    pub fn corner(&self, corner: Corner) -> Vec2 {
-        self.center()
+    pub fn offset_corner(&self, corner: &Corner) -> Vec2 {
+        self.offset()
             + match corner {
                 Corner::N => Vec2 {
                     x: 0.0,

@@ -4,5 +4,6 @@
 - [x] hex tile
 - [x] hex map (6 tiles)
 - [x] make unit (sphere) on hex tile
-- [ ] make unit move between tiles
+- [x] make unit move between tiles
+- [ ] make unit move to clicked tile
 - [ ] generate small hex map (randomly)

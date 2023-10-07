@@ -1,26 +1,34 @@
+pub mod order;
 pub mod unit_bundle;
 
 use bevy::prelude::*;
 
-use crate::hex::position::Position;
+use crate::map::tile::Tile;
 
-use self::unit_bundle::UnitBundle;
+use self::{order::Order, unit_bundle::UnitBundle};
 
 #[derive(Component)]
 pub struct Unit {
-    pub position: Position,
+    pub tile: Tile,
+    pub order: Option<Order>,
+}
+
+impl Unit {
+    pub fn new(tile: Tile) -> Self {
+        Self { tile, order: None }
+    }
 }
 
 pub fn spawn_unit(
     commands: &mut Commands,
     meshes: &mut ResMut<Assets<Mesh>>,
     materials: &mut ResMut<Assets<StandardMaterial>>,
-    position: Position,
+    tile: Tile,
 ) {
-    let center = position.center();
+    let center = tile.center();
 
     commands.spawn(UnitBundle {
-        unit: Unit { position },
+        unit: Unit::new(tile),
         pbr: PbrBundle {
             mesh: meshes.add(
                 shape::Icosphere {
@@ -39,7 +47,7 @@ pub fn spawn_unit(
                 },
                 ..default()
             }),
-            transform: Transform::from_xyz(center.x, 0.0, center.y),
+            transform: Transform::from_translation(center),
             ..default()
         },
     });
