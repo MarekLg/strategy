@@ -1,21 +1,17 @@
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
 use tile::{events::TileSelectedEvent, map_generation::generate_circle};
-use unit::{
-    order::{add_tile_move_order, order_system},
-    spawn_unit,
-};
+use units::{Unit, UnitsPlugin};
 
 mod hex;
 mod tile;
-mod unit;
+mod units;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugins(DefaultPickingPlugins)
+        .add_plugins((DefaultPlugins, DefaultPickingPlugins))
+        .add_plugins(UnitsPlugin)
         .add_systems(Startup, startup)
-        .add_systems(Update, (order_system, add_tile_move_order))
         .add_event::<TileSelectedEvent>()
         .run();
 }
@@ -26,13 +22,28 @@ fn startup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let tiles = generate_circle(1);
+    let unit_tile = tiles.first().unwrap();
 
-    spawn_unit(
-        &mut commands,
-        &mut meshes,
-        &mut materials,
-        tiles.first().unwrap().clone(),
-    );
+    commands.spawn((
+        Unit::new(unit_tile.clone()),
+        PbrBundle {
+            mesh: meshes.add(
+                shape::Icosphere {
+                    radius: 0.2,
+                    ..default()
+                }
+                .try_into()
+                .unwrap(),
+            ),
+            material: materials.add(StandardMaterial {
+                base_color: Color::WHITE,
+                unlit: true,
+                ..default()
+            }),
+            transform: Transform::from_translation(unit_tile.center()),
+            ..default()
+        },
+    ));
 
     for tile in tiles {
         tile.spawn(&mut commands, &mut meshes, &mut materials);

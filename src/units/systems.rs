@@ -1,15 +1,8 @@
-use std::ops::Mul;
-
 use bevy::prelude::*;
 
 use crate::tile::{events::TileSelectedEvent, Tile};
 
-use super::Unit;
-
-#[derive(Debug)]
-pub enum Order {
-    Move(Tile),
-}
+use super::{Order, Unit};
 
 pub fn order_system(mut query: Query<(&mut Unit, &mut Transform)>) {
     for (mut unit, mut transform) in query.iter_mut() {
@@ -26,7 +19,7 @@ pub fn order_system(mut query: Query<(&mut Unit, &mut Transform)>) {
                         unit.order = None;
                     } else {
                         transform.translation +=
-                            direction.normalize().mul(speed).clamp_length_max(distance);
+                            (direction.normalize() * speed).clamp_length_max(distance);
                     }
                 }
             }
@@ -34,7 +27,7 @@ pub fn order_system(mut query: Query<(&mut Unit, &mut Transform)>) {
     }
 }
 
-pub fn add_tile_move_order(
+pub fn add_move_order_on_tile_selected(
     mut tile_selected: EventReader<TileSelectedEvent>,
     mut units: Query<&mut Unit>,
     tiles: Query<&Tile>,
