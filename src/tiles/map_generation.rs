@@ -1,9 +1,4 @@
-use crate::hex::{
-    edge::{Edge, EDGES},
-    position::Position,
-};
-
-use super::Tile;
+use super::{tile::Tile, Edge, Position, EDGES};
 
 pub fn generate_circle(radius: u16) -> Vec<Tile> {
     let mut tiles = Vec::new();

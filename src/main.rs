@@ -1,18 +1,16 @@
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
-use tile::{events::TileSelectedEvent, map_generation::generate_circle};
+use tiles::{generate_circle, TilesPlugin};
 use units::{Unit, UnitsPlugin};
 
-mod hex;
-mod tile;
+mod tiles;
 mod units;
 
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, DefaultPickingPlugins))
-        .add_plugins(UnitsPlugin)
+        .add_plugins((TilesPlugin, UnitsPlugin))
         .add_systems(Startup, startup)
-        .add_event::<TileSelectedEvent>()
         .run();
 }
 

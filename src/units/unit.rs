@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::tile::Tile;
+use crate::tiles::Tile;
 
 #[derive(Component)]
 pub struct Unit {

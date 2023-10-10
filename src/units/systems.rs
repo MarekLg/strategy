@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::tile::{events::TileSelectedEvent, Tile};
+use crate::tiles::{Tile, TileSelectedEvent};
 
 use super::{Order, Unit};
 

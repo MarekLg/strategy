@@ -3,9 +3,7 @@ use bevy::{
     render::{mesh::Indices, render_resource::PrimitiveTopology},
 };
 
-use crate::hex::corner::CORNERS;
-
-use super::Tile;
+use super::{tile::Tile, CORNERS};
 
 impl Tile {
     pub fn generate_mesh(&self) -> Mesh {

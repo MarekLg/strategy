@@ -1,14 +1,8 @@
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
-use rand::{self, Rng};
+use rand::Rng;
 
-use crate::hex::{corner::Corner, position::Position};
-
-use self::events::TileSelectedEvent;
-
-pub mod events;
-pub mod map_generation;
-pub mod mesh_generation;
+use super::{Corner, Position, TileSelectedEvent};
 
 #[derive(Debug, Clone, Copy, Component)]
 pub struct Tile {
