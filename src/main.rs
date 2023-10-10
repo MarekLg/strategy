@@ -1,21 +1,22 @@
 use bevy::prelude::*;
-use hex::{edge::Edge, position::Position};
-use map::{tile::Tile, Map};
+use bevy_mod_picking::prelude::*;
+use tile::{events::TileSelectedEvent, map_generation::generate_circle};
 use unit::{
-    order::{order_system, Order},
-    spawn_unit, Unit,
+    order::{add_tile_move_order, order_system},
+    spawn_unit,
 };
 
 mod hex;
-mod map;
+mod tile;
 mod unit;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPickingPlugins)
         .add_systems(Startup, startup)
-        .add_systems(PostStartup, add_order)
-        .add_systems(Update, order_system)
+        .add_systems(Update, (order_system, add_tile_move_order))
+        .add_event::<TileSelectedEvent>()
         .run();
 }
 
@@ -24,28 +25,24 @@ fn startup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let map = Map::from_circle(1);
-
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(map.generate_mesh()),
-        ..default()
-    });
+    let tiles = generate_circle(1);
 
     spawn_unit(
         &mut commands,
         &mut meshes,
         &mut materials,
-        map.tiles().first().unwrap().clone(),
+        tiles.first().unwrap().clone(),
     );
 
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 10.0, -1.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ..default()
-    });
-}
-
-fn add_order(mut query: Query<&mut Unit>) {
-    for mut unit in query.iter_mut() {
-        unit.order = Some(Order::Move(Tile::new(Position::ZERO.neighbor(&Edge::NE))));
+    for tile in tiles {
+        tile.spawn(&mut commands, &mut meshes, &mut materials);
     }
+
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 10.0, -1.0).looking_at(Vec3::ZERO, Vec3::Y),
+            ..default()
+        },
+        RaycastPickCamera::default(),
+    ));
 }

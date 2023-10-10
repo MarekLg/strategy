@@ -2,7 +2,7 @@ use std::ops::Mul;
 
 use bevy::prelude::*;
 
-use crate::map::tile::Tile;
+use crate::tile::{events::TileSelectedEvent, Tile};
 
 use super::Unit;
 
@@ -19,7 +19,7 @@ pub fn order_system(mut query: Query<(&mut Unit, &mut Transform)>) {
                     let target = tile.center();
                     let direction = target - transform.translation;
                     let distance = direction.length();
-                    let speed = 0.01;
+                    let speed = 0.02;
 
                     if distance < f32::EPSILON {
                         transform.translation = target;
@@ -29,6 +29,20 @@ pub fn order_system(mut query: Query<(&mut Unit, &mut Transform)>) {
                             direction.normalize().mul(speed).clamp_length_max(distance);
                     }
                 }
+            }
+        }
+    }
+}
+
+pub fn add_tile_move_order(
+    mut tile_selected: EventReader<TileSelectedEvent>,
+    mut units: Query<&mut Unit>,
+    tiles: Query<&Tile>,
+) {
+    for event in tile_selected.iter() {
+        for mut unit in units.iter_mut() {
+            if unit.order.is_none() {
+                unit.order = Some(Order::Move(*tiles.get(event.tile_entity).unwrap()));
             }
         }
     }

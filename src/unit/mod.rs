@@ -3,7 +3,7 @@ pub mod unit_bundle;
 
 use bevy::prelude::*;
 
-use crate::map::tile::Tile;
+use crate::tile::Tile;
 
 use self::{order::Order, unit_bundle::UnitBundle};
 
@@ -39,12 +39,8 @@ pub fn spawn_unit(
                 .unwrap(),
             ),
             material: materials.add(StandardMaterial {
-                base_color: Color::Rgba {
-                    red: 0.0,
-                    green: 1.0,
-                    blue: 0.0,
-                    alpha: 1.0,
-                },
+                base_color: Color::WHITE,
+                unlit: true,
                 ..default()
             }),
             transform: Transform::from_translation(center),
