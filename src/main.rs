@@ -8,7 +8,13 @@ mod units;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, DefaultPickingPlugins))
+        .add_plugins((
+            DefaultPlugins,
+            DefaultPickingPlugins
+                .build()
+                .disable::<DebugPickingPlugin>()
+                .disable::<DefaultHighlightingPlugin>(),
+        ))
         .add_plugins((TilesPlugin, UnitsPlugin))
         .add_systems(Startup, startup)
         .run();
