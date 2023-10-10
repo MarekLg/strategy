@@ -1,8 +1,10 @@
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
+use selection::{SelectableBundle, Selection};
 use tiles::{generate_circle, TilesPlugin};
 use units::{Unit, UnitsPlugin};
 
+mod selection;
 mod tiles;
 mod units;
 
@@ -15,6 +17,7 @@ fn main() {
                 .disable::<DebugPickingPlugin>()
                 .disable::<DefaultHighlightingPlugin>(),
         ))
+        .init_resource::<Selection>()
         .add_plugins((TilesPlugin, UnitsPlugin))
         .add_systems(Startup, startup)
         .run();
@@ -27,6 +30,7 @@ fn startup(
 ) {
     let tiles = generate_circle(1);
     let unit_tile = tiles.first().unwrap();
+    let unit_tile2 = tiles.last().unwrap();
 
     commands.spawn((
         Unit::new(unit_tile.clone()),
@@ -47,6 +51,29 @@ fn startup(
             transform: Transform::from_translation(unit_tile.center()),
             ..default()
         },
+        SelectableBundle::default(),
+    ));
+
+    commands.spawn((
+        Unit::new(unit_tile2.clone()),
+        PbrBundle {
+            mesh: meshes.add(
+                shape::Icosphere {
+                    radius: 0.2,
+                    ..default()
+                }
+                .try_into()
+                .unwrap(),
+            ),
+            material: materials.add(StandardMaterial {
+                base_color: Color::WHITE,
+                unlit: true,
+                ..default()
+            }),
+            transform: Transform::from_translation(unit_tile2.center()),
+            ..default()
+        },
+        SelectableBundle::default(),
     ));
 
     for tile in tiles {

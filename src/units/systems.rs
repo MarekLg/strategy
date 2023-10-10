@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::tiles::{Tile, TileSelectedEvent};
+use crate::{
+    selection::Selection,
+    tiles::{Tile, TileSelectedEvent},
+};
 
 use super::{Order, Unit};
 
@@ -29,13 +32,16 @@ pub fn order_system(mut query: Query<(&mut Unit, &mut Transform)>) {
 
 pub fn add_move_order_on_tile_selected(
     mut tile_selected: EventReader<TileSelectedEvent>,
+    selection: Res<Selection>,
     mut units: Query<&mut Unit>,
     tiles: Query<&Tile>,
 ) {
-    for event in tile_selected.iter() {
-        for mut unit in units.iter_mut() {
+    if let Some(selected_entity) = selection.entity {
+        if let Ok(mut unit) = units.get_mut(selected_entity) {
             if unit.order.is_none() {
-                unit.order = Some(Order::Move(*tiles.get(event.tile_entity).unwrap()));
+                for event in tile_selected.iter() {
+                    unit.order = Some(Order::Move(*tiles.get(event.tile_entity).unwrap()));
+                }
             }
         }
     }

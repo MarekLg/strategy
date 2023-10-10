@@ -6,5 +6,6 @@
 - [x] make unit (sphere) on hex tile
 - [x] make unit move between tiles
 - [x] make unit move to clicked tile
-- [ ] multiple movable units
+- [x] multiple movable units
+- [ ] pathfinding
 - [ ] generate small hex map (randomly)
