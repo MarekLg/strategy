@@ -4,13 +4,12 @@ use crate::tiles::Tile;
 
 #[derive(Component)]
 pub struct Unit {
-    pub tile: Tile,
     pub order: Option<Order>,
 }
 
 impl Unit {
-    pub fn new(tile: Tile) -> Self {
-        Self { tile, order: None }
+    pub fn new() -> Self {
+        Self { order: None }
     }
 }
 

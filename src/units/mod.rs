@@ -1,9 +1,13 @@
+mod bundle;
 mod systems;
 mod unit;
 
 use bevy::prelude::*;
 
-pub use self::unit::{Order, Unit};
+pub use self::{
+    bundle::UnitBundle,
+    unit::{Order, Unit},
+};
 
 use self::systems::{add_move_order_on_tile_selected, order_system};
 

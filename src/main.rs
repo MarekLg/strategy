@@ -32,49 +32,18 @@ fn startup(
     let unit_tile = tiles.first().unwrap();
     let unit_tile2 = tiles.last().unwrap();
 
-    commands.spawn((
-        Unit::new(unit_tile.clone()),
-        PbrBundle {
-            mesh: meshes.add(
-                shape::Icosphere {
-                    radius: 0.2,
-                    ..default()
-                }
-                .try_into()
-                .unwrap(),
-            ),
-            material: materials.add(StandardMaterial {
-                base_color: Color::WHITE,
-                unlit: true,
-                ..default()
-            }),
-            transform: Transform::from_translation(unit_tile.center()),
-            ..default()
-        },
-        SelectableBundle::default(),
-    ));
-
-    commands.spawn((
-        Unit::new(unit_tile2.clone()),
-        PbrBundle {
-            mesh: meshes.add(
-                shape::Icosphere {
-                    radius: 0.2,
-                    ..default()
-                }
-                .try_into()
-                .unwrap(),
-            ),
-            material: materials.add(StandardMaterial {
-                base_color: Color::WHITE,
-                unlit: true,
-                ..default()
-            }),
-            transform: Transform::from_translation(unit_tile2.center()),
-            ..default()
-        },
-        SelectableBundle::default(),
-    ));
+    spawn_unit(
+        &mut commands,
+        &mut meshes,
+        &mut materials,
+        unit_tile.center(),
+    );
+    spawn_unit(
+        &mut commands,
+        &mut meshes,
+        &mut materials,
+        unit_tile2.center(),
+    );
 
     for tile in tiles {
         tile.spawn(&mut commands, &mut meshes, &mut materials);
@@ -86,5 +55,34 @@ fn startup(
             ..default()
         },
         RaycastPickCamera::default(),
+    ));
+}
+
+fn spawn_unit(
+    commands: &mut Commands,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &mut ResMut<Assets<StandardMaterial>>,
+    translation: Vec3,
+) {
+    commands.spawn((
+        Unit::new(),
+        PbrBundle {
+            mesh: meshes.add(
+                shape::Icosphere {
+                    radius: 0.2,
+                    ..default()
+                }
+                .try_into()
+                .unwrap(),
+            ),
+            material: materials.add(StandardMaterial {
+                base_color: Color::WHITE,
+                unlit: true,
+                ..default()
+            }),
+            transform: Transform::from_translation(translation),
+            ..default()
+        },
+        SelectableBundle::default(),
     ));
 }
