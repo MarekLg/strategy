@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
-use selection::{SelectableBundle, Selection};
+use selection::{deselect_system, SelectableBundle, Selection};
 use tiles::{generate_circle, TilesPlugin};
 use units::{Unit, UnitsPlugin};
 
@@ -20,6 +20,7 @@ fn main() {
         .init_resource::<Selection>()
         .add_plugins((TilesPlugin, UnitsPlugin))
         .add_systems(Startup, startup)
+        .add_systems(Update, deselect_system)
         .run();
 }
 

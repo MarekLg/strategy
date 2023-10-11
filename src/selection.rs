@@ -40,3 +40,9 @@ impl Default for SelectableBundle {
 fn change_selection(event: Listener<Pointer<Click>>, mut selection: ResMut<Selection>) {
     selection.entity = Some(event.target);
 }
+
+pub fn deselect_system(buttons: Res<Input<MouseButton>>, mut selection: ResMut<Selection>) {
+    if buttons.pressed(MouseButton::Right) {
+        selection.entity = None;
+    }
+}
