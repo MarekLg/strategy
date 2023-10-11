@@ -2,16 +2,22 @@ use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
 use rand::Rng;
 
+use crate::units::UnitMovedEvent;
+
 use super::{Corner, Position, TileSelectedEvent};
 
 #[derive(Debug, Clone, Copy, Component)]
 pub struct Tile {
     position: Position,
+    pub occupant: Option<Entity>,
 }
 
 impl Tile {
     pub fn new(position: Position) -> Self {
-        Self { position }
+        Self {
+            position,
+            occupant: None,
+        }
     }
 
     pub fn spawn(
@@ -72,4 +78,19 @@ fn send_tile_selected_event(
     tile_selected.send(TileSelectedEvent {
         tile_entity: event.target,
     });
+}
+
+pub fn clear_occupant_on_moved(
+    mut unit_moved: EventReader<UnitMovedEvent>,
+    mut tiles: Query<(Entity, &mut Tile)>,
+) {
+    for event in unit_moved.iter() {
+        for (tile_entity, mut tile) in tiles.iter_mut() {
+            if let Some(occupant_entity) = tile.occupant {
+                if occupant_entity == event.unit_entity && tile_entity != event.tile_entity {
+                    tile.occupant = None;
+                }
+            }
+        }
+    }
 }

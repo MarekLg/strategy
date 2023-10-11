@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use self::tile::clear_occupant_on_moved;
 pub use self::{
     events::TileSelectedEvent,
     hex::{
@@ -21,6 +22,7 @@ pub struct TilesPlugin;
 
 impl Plugin for TilesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<TileSelectedEvent>();
+        app.add_event::<TileSelectedEvent>()
+            .add_systems(Update, clear_occupant_on_moved);
     }
 }

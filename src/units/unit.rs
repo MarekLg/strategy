@@ -1,7 +1,5 @@
 use bevy::prelude::*;
 
-use crate::tiles::Tile;
-
 #[derive(Component)]
 pub struct Unit {
     pub order: Option<Order>,
@@ -15,5 +13,5 @@ impl Unit {
 
 #[derive(Debug)]
 pub enum Order {
-    Move(Tile),
+    Move { tile_entity: Entity },
 }
